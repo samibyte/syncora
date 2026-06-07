@@ -1,0 +1,169 @@
+{
+  "users": [
+    {
+      "id": "user_admin",
+      "name": "Alex Admin",
+      "email": "admin@example.com",
+      "passwordHash": "$2b$10$BDMZ1ksGdKLgQFMoyo5QdOtG9eKaqrNFnJpQs8Em2p.pWgpOK6W2S",
+      "role": "admin",
+      "createdAt": "2026-06-01T08:00:00Z"
+    },
+    {
+      "id": "user_pm",
+      "name": "Sarah Project",
+      "email": "pm@example.com",
+      "passwordHash": "$2b$10$BDMZ1ksGdKLgQFMoyo5QdOtG9eKaqrNFnJpQs8Em2p.pWgpOK6W2S",
+      "role": "project_manager",
+      "createdAt": "2026-06-01T08:00:00Z"
+    },
+    {
+      "id": "user_member",
+      "name": "John Member",
+      "email": "member@example.com",
+      "passwordHash": "$2b$10$BDMZ1ksGdKLgQFMoyo5QdOtG9eKaqrNFnJpQs8Em2p.pWgpOK6W2S",
+      "role": "team_member",
+      "createdAt": "2026-06-01T08:00:00Z"
+    },
+    {
+      "id": "member_2",
+      "name": "Emma Watson",
+      "email": "emma@example.com",
+      "passwordHash": "$2b$10$BDMZ1ksGdKLgQFMoyo5QdOtG9eKaqrNFnJpQs8Em2p.pWgpOK6W2S",
+      "role": "team_member",
+      "createdAt": "2026-06-02T10:00:00Z"
+    },
+    {
+      "id": "member_3",
+      "name": "David Miller",
+      "email": "david@example.com",
+      "passwordHash": "$2b$10$BDMZ1ksGdKLgQFMoyo5QdOtG9eKaqrNFnJpQs8Em2p.pWgpOK6W2S",
+      "role": "team_member",
+      "createdAt": "2026-06-02T11:00:00Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj_1",
+      "name": "Syncora Cloud Migration",
+      "description": "Migrating existing infrastructure to high-availability cloud cluster with zero-downtime goal.",
+      "deadline": "2026-08-30",
+      "status": "active",
+      "memberIds": ["user_pm", "user_member", "member_2"],
+      "createdAt": "2026-06-05T09:00:00Z",
+      "updatedAt": "2026-06-05T09:00:00Z"
+    },
+    {
+      "id": "proj_2",
+      "name": "Mobile App UI Refresh",
+      "description": "Revamping the user interface for the Syncora iOS and Android mobile applications.",
+      "deadline": "2026-07-20",
+      "status": "active",
+      "memberIds": ["user_pm", "member_2", "member_3"],
+      "createdAt": "2026-06-06T10:00:00Z",
+      "updatedAt": "2026-06-06T10:00:00Z"
+    },
+    {
+      "id": "proj_3",
+      "name": "API Documentation Hub",
+      "description": "Creating a comprehensive developer portal with interactive documentation for our public APIs.",
+      "deadline": "2026-06-25",
+      "status": "on_hold",
+      "memberIds": ["user_admin", "member_3"],
+      "createdAt": "2026-06-03T11:00:00Z",
+      "updatedAt": "2026-06-03T11:00:00Z"
+    },
+    {
+      "id": "proj_4",
+      "name": "Customer Feedback System",
+      "description": "Internal tool to aggregate and analyze customer feedback from multiple social channels.",
+      "deadline": "2026-05-15",
+      "status": "completed",
+      "memberIds": ["user_pm", "user_member"],
+      "createdAt": "2026-04-10T08:00:00Z",
+      "updatedAt": "2026-05-20T14:00:00Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_1",
+      "projectId": "proj_1",
+      "assignedMemberId": "user_member",
+      "assignedMemberName": "John Member",
+      "title": "AWS VPC Configuration",
+      "description": "Setup public and private subnets with proper NAT gateway routing.",
+      "priority": "high",
+      "status": "in_progress",
+      "dueDate": "2026-06-15",
+      "createdAt": "2026-06-07T09:00:00Z",
+      "updatedAt": "2026-06-07T09:00:00Z"
+    },
+    {
+      "id": "task_2",
+      "projectId": "proj_1",
+      "assignedMemberId": "member_2",
+      "assignedMemberName": "Emma Watson",
+      "title": "Database Read Replicas",
+      "description": "PostgreSQL replication setup for improved read performance.",
+      "priority": "medium",
+      "status": "todo",
+      "dueDate": "2026-06-22",
+      "createdAt": "2026-06-07T10:00:00Z",
+      "updatedAt": "2026-06-07T10:00:00Z"
+    },
+    {
+      "id": "task_3",
+      "projectId": "proj_2",
+      "assignedMemberId": "member_2",
+      "assignedMemberName": "Emma Watson",
+      "title": "Figma Wireframes Review",
+      "description": "Finalize new navigation patterns for mobile viewports.",
+      "priority": "high",
+      "status": "in_progress",
+      "dueDate": "2026-06-12",
+      "createdAt": "2026-06-07T11:00:00Z",
+      "updatedAt": "2026-06-07T11:00:00Z"
+    },
+    {
+      "id": "task_4",
+      "projectId": "proj_2",
+      "assignedMemberId": "member_3",
+      "assignedMemberName": "David Miller",
+      "title": "Dark Mode Support",
+      "description": "Implement CSS variables for automatic theme switching.",
+      "priority": "low",
+      "status": "todo",
+      "dueDate": "2026-06-28",
+      "createdAt": "2026-06-07T12:00:00Z",
+      "updatedAt": "2026-06-07T12:00:00Z"
+    },
+    {
+      "id": "task_5",
+      "projectId": "proj_4",
+      "assignedMemberId": "user_member",
+      "assignedMemberName": "John Member",
+      "title": "Twitter API Integration",
+      "description": "Connect to Twitter stream to pull mentions and hashtags.",
+      "priority": "high",
+      "status": "completed",
+      "dueDate": "2026-05-01",
+      "createdAt": "2026-04-15T09:00:00Z",
+      "updatedAt": "2026-05-10T11:00:00Z"
+    }
+  ],
+  "activityLogs": [
+    {
+      "id": "log_1",
+      "action": "project_created",
+      "description": "Project 'Syncora Cloud Migration' created by Alex Admin",
+      "userId": "user_admin",
+      "createdAt": "2026-06-05T09:00:00Z"
+    },
+    {
+      "id": "log_2",
+      "action": "task_created",
+      "description": "Task 'AWS VPC Configuration' created and assigned to John Member",
+      "userId": "user_pm",
+      "createdAt": "2026-06-07T09:00:00Z"
+    }
+  ]
+}
