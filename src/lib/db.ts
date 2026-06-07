@@ -15,7 +15,9 @@ const defaultDb: Database = {
   projects: [],
   tasks: [],
   activityLogs: [],
+  comments: [],
 };
+
 
 declare global {
   // eslint-disable-next-line no-var

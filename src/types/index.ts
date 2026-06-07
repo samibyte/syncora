@@ -76,13 +76,25 @@ export interface ActivityLog {
   createdAt: string;
 }
 
+// --- Comments ---
+export interface Comment {
+  id: string;
+  taskId: string;
+  authorId: string;
+  authorName: string;
+  content: string;
+  createdAt: string;
+}
+
 // --- DB Shape ---
 export interface Database {
   users: User[];
   projects: Project[];
   tasks: Task[];
   activityLogs: ActivityLog[];
+  comments: Comment[];
 }
+
 
 // --- API Response ---
 export interface ApiResponse<T = unknown> {
