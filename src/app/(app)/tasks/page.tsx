@@ -1,0 +1,379 @@
+"use client";
+import { useState } from "react";
+import { useTasks } from "@/hooks/useTasks";
+import { useProjects } from "@/hooks/useProjects";
+import { useMembers } from "@/hooks/useMembers";
+import { PageHeader } from "@/components/shared/PageHeader";
+
+import { TaskForm } from "@/components/tasks/TaskForm";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
+import { EmptyState } from "@/components/shared/EmptyState";
+import {
+  CheckSquare,
+  Trash2,
+  Plus,
+  Filter,
+  Calendar,
+  AlertCircle,
+  MoreVertical,
+  Edit2,
+  User,
+  Search,
+  X,
+} from "lucide-react";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/authStore";
+import type { Task } from "@/types";
+import { Input } from "@/components/ui/input";
+
+export default function TasksPage() {
+  const { user } = useAuthStore();
+  const { projects } = useProjects();
+  const { members } = useMembers();
+
+  const [projectId, setProjectId] = useState("");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
+  const [assignedMemberId, setAssignedMemberId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { tasks, mutate, isLoading } = useTasks({
+    projectId,
+    status,
+    priority,
+    assignedMemberId,
+  });
+
+
+  const filteredTasks = tasks.filter((t) =>
+    t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    t.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const [deleteTarget, setDeleteTarget] = useState<Task | null>(null);
+  const [editTarget, setEditTarget] = useState<Task | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+
+  const canManage = user?.role === "admin" || user?.role === "project_manager";
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/tasks/${deleteTarget.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Failed to delete task");
+        return;
+      }
+      toast.success("Task deleted");
+      mutate();
+      setDeleteTarget(null);
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleStatusUpdate = async (task: Task, newStatus: string) => {
+    try {
+      const res = await fetch(`/api/tasks/${task.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.error || "Failed to update status");
+        return;
+      }
+      toast.success("Status updated");
+      mutate();
+    } catch {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const getPriorityColor = (p: string) => {
+    switch (p) {
+      case "high":
+        return "text-red-600 bg-red-50 border-red-100";
+      case "medium":
+        return "text-amber-600 bg-amber-50 border-amber-100";
+      case "low":
+        return "text-blue-600 bg-blue-50 border-blue-100";
+      default:
+        return "text-slate-600 bg-slate-50 border-slate-100";
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Tasks"
+        description="Manage your team's workload and track progress"
+      >
+        {canManage && (
+          <button
+            onClick={() => {
+              setEditTarget(null);
+              setShowForm((v) => !v);
+            }}
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/20 transition-all h-10"
+          >
+            <Plus className="h-4 w-4" />
+            Add Task
+          </button>
+        )}
+      </PageHeader>
+
+      {/* Filters */}
+      <div className="bg-card rounded-2xl border p-4 flex flex-wrap gap-4 items-center">
+        <div className="flex items-center gap-2 text-muted-foreground mr-2">
+          <Filter className="h-4 w-4" />
+          <span className="text-sm font-medium">Filters:</span>
+        </div>
+
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search tasks..."
+            className="pl-9 h-9 bg-muted border-none rounded-lg"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+
+        <select
+          value={projectId}
+          onChange={(e) => setProjectId(e.target.value)}
+          className="bg-muted px-3 py-1.5 rounded-lg text-sm outline-none border border-transparent focus:border-primary/30 transition-all min-w-[150px]"
+        >
+          <option value="">All Projects</option>
+          {projects.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="bg-muted px-3 py-1.5 rounded-lg text-sm outline-none border border-transparent focus:border-primary/30 transition-all"
+        >
+          <option value="">All Status</option>
+          <option value="todo">Todo</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+
+        <select
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          className="bg-muted px-3 py-1.5 rounded-lg text-sm outline-none border border-transparent focus:border-primary/30 transition-all"
+        >
+          <option value="">All Priorities</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+
+        <select
+          value={assignedMemberId}
+          onChange={(e) => setAssignedMemberId(e.target.value)}
+          className="bg-muted px-3 py-1.5 rounded-lg text-sm outline-none border border-transparent focus:border-primary/30 transition-all min-w-[150px]"
+        >
+          <option value="">All Members</option>
+          {members.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.name}
+            </option>
+          ))}
+        </select>
+
+        {(projectId || status || priority || assignedMemberId) && (
+          <button
+            onClick={() => {
+              setProjectId("");
+              setStatus("");
+              setPriority("");
+              setAssignedMemberId("");
+            }}
+            className="text-xs font-semibold text-primary hover:underline ml-auto"
+          >
+            Clear All
+          </button>
+        )}
+
+      </div>
+
+      {/* Form area */}
+      {(showForm || editTarget) && (
+        <div className="bg-card rounded-2xl border p-6 shadow-sm border-primary/20 ring-4 ring-primary/5">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-bold">
+              {editTarget ? "Edit Task" : "Create New Task"}
+            </h3>
+            <button
+              onClick={() => {
+                setShowForm(false);
+                setEditTarget(null);
+              }}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </button>
+          </div>
+          <TaskForm
+            initialData={editTarget || undefined}
+            defaultProjectId={projectId}
+            onSuccess={() => {
+              mutate();
+              setShowForm(false);
+              setEditTarget(null);
+            }}
+          />
+        </div>
+      )}
+
+      {/* Task List */}
+      <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
+        {isLoading ? (
+          <div className="p-20 text-center text-muted-foreground animate-pulse">
+            Loading tasks...
+          </div>
+        ) : filteredTasks.length === 0 ? (
+          <EmptyState
+            icon={CheckSquare}
+            title={searchQuery ? "No matching tasks" : "No tasks found"}
+            description={searchQuery ? "Try a different search term or project filter." : "Adjust your filters or create a new task to get started."}
+          />
+        ) : (
+          <div className="divide-y overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-muted/50 text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
+                <tr>
+                  <th className="px-6 py-4">Task Details</th>
+                  <th className="px-6 py-4">Assigned To</th>
+                  <th className="px-6 py-4">Due Date</th>
+                  <th className="px-6 py-4">Priority</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {filteredTasks.map((task) => (
+                  <tr
+                    key={task.id}
+                    className="group hover:bg-muted/30 transition-colors"
+                  >
+                    <td className="px-6 py-4 max-w-sm">
+                      <div className="space-y-1">
+                        <p className={cn(
+                          "font-bold text-sm tracking-tight",
+                          task.status === "completed" && "line-through text-muted-foreground"
+                        )}>
+                          {task.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {task.description}
+                        </p>
+                        <p className="text-[10px] font-bold text-primary uppercase">
+                          {projects.find(p => p.id === task.projectId)?.name || "Unknown Project"}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold border border-border">
+                          {task.assignedMemberName?.[0] || <User className="h-3 w-3" />}
+                        </div>
+                        <span className="text-xs font-medium">{task.assignedMemberName}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span>{task.dueDate}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={cn(
+                        "text-[10px] font-bold uppercase tracking-tighter px-2.5 py-1 rounded-full border",
+                        getPriorityColor(task.priority)
+                      )}>
+                        {task.priority}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <select
+                        value={task.status}
+                        onChange={(e) => handleStatusUpdate(task, e.target.value)}
+                        disabled={user?.role === "team_member" && user?.id !== task.assignedMemberId}
+                        className={cn(
+                          "text-xs font-semibold px-2 py-1 rounded-lg border bg-background outline-none transition-all focus:ring-2 cursor-pointer",
+                          task.status === "completed" ? "text-emerald-700 bg-emerald-50 border-emerald-200" :
+                          task.status === "in_progress" ? "text-blue-700 bg-blue-50 border-blue-200" :
+                          "text-slate-700 bg-slate-50 border-slate-200"
+                        )}
+                      >
+                        <option value="todo">Todo</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {canManage && (
+                        <div className="flex items-center justify-end gap-1">
+                          <button 
+                            onClick={() => {
+                              setEditTarget(task);
+                              setShowForm(false);
+                            }}
+                            className="p-2 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button 
+                            onClick={() => setDeleteTarget(task)}
+                            className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        title="Delete Task"
+        description={`Are you sure you want to delete "${deleteTarget?.title}"? This cannot be undone.`}
+        confirmText="Delete Task"
+        loading={deleting}
+      />
+    </div>
+  );
+}
