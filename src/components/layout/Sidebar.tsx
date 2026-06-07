@@ -12,6 +12,7 @@ import {
   Target,
 } from "lucide-react";
 import Image from "next/image";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -54,19 +55,20 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             </div>
             <div>
               <span className="font-bold text-sm tracking-tight">Syncora</span>
-              <p className="text-xs text-sidebar-foreground/60">
-                Project Collaboration
-              </p>
             </div>
           </div>
 
-          <button
-            className="lg:hidden text-sidebar-foreground/60 hover:text-sidebar-foreground p-1 rounded-md hover:bg-sidebar-accent transition-colors"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <button
+              className="lg:hidden text-sidebar-foreground/60 hover:text-sidebar-foreground p-1 rounded-md hover:bg-sidebar-accent transition-colors"
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
+
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">

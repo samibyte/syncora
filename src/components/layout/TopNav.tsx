@@ -65,10 +65,10 @@ export function TopNav({ onMenuClick = () => {} }: TopNavProps) {
     : "U";
 
   return (
-    <header className="h-14 border-b border-slate-200 bg-background/80 backdrop-blur-sm flex items-center justify-between px-4 lg:px-6 shrink-0 sticky top-0 z-10">
+    <header className="h-14 border-b border-border bg-background/80 backdrop-blur-sm flex items-center justify-between px-4 lg:px-6 shrink-0 sticky top-0 z-10">
       <div className="flex items-center gap-4 flex-1">
         <button
-          className="lg:hidden p-2 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          className="lg:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           onClick={onMenuClick}
           type="button"
         >
@@ -78,7 +78,7 @@ export function TopNav({ onMenuClick = () => {} }: TopNavProps) {
 
       <div className="flex items-center gap-3">
         <div className="flex flex-col items-end hidden sm:flex">
-          <span className="text-xs font-bold text-slate-900 leading-none">
+          <span className="text-xs font-bold text-foreground leading-none">
             {user?.name}
           </span>
           <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
@@ -104,12 +104,12 @@ export function TopNav({ onMenuClick = () => {} }: TopNavProps) {
 
           {menuOpen && (
             <div
-              className="absolute right-0 mt-2 w-52 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-100"
+              className="absolute right-0 mt-2 w-52 rounded-2xl border border-border bg-card p-1.5 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-100"
               role="menu"
             >
               <div className="px-3 py-2.5">
                 <div className="flex flex-col space-y-0.5">
-                  <span className="text-sm font-bold text-slate-900">
+                  <span className="text-sm font-bold text-foreground">
                     {user?.name}
                   </span>
                   <span className="text-xs text-muted-foreground">
@@ -117,11 +117,11 @@ export function TopNav({ onMenuClick = () => {} }: TopNavProps) {
                   </span>
                 </div>
               </div>
-              <div className="my-1.5 h-px bg-slate-100" />
+              <div className="my-1.5 h-px bg-border" />
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full flex items-center rounded-xl px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                className="w-full flex items-center rounded-xl px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-500/10 transition-colors"
                 role="menuitem"
               >
                 <LogOut className="mr-2.5 h-4 w-4" />

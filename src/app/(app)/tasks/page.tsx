@@ -196,7 +196,7 @@ export default function TasksPage() {
       case "low":
         return "text-blue-600 bg-blue-50 border-blue-100";
       default:
-        return "text-slate-600 bg-slate-50 border-slate-100";
+        return "text-muted-foreground bg-muted border-border";
     }
   };
 
@@ -369,10 +369,10 @@ export default function TasksPage() {
               disabled={isBulkUpdating}
               className="bg-white/10 border border-white/20 rounded-lg px-3 py-1.5 text-xs font-bold outline-none focus:ring-2 focus:ring-white/50"
             >
-              <option value="" className="text-slate-900">Change Status...</option>
-              <option value="todo" className="text-slate-900">Set Todo</option>
-              <option value="in_progress" className="text-slate-900">Set In Progress</option>
-              <option value="completed" className="text-slate-900">Set Completed</option>
+              <option value="" className="text-foreground">Change Status...</option>
+              <option value="todo" className="text-foreground">Set Todo</option>
+              <option value="in_progress" className="text-foreground">Set In Progress</option>
+              <option value="completed" className="text-foreground">Set Completed</option>
             </select>
             <button
               onClick={handleBulkDelete}
@@ -504,9 +504,10 @@ export default function TasksPage() {
                           "text-xs font-semibold px-2 py-1 rounded-lg border bg-background outline-none transition-all focus:ring-2 cursor-pointer",
                           task.status === "completed" ? "text-emerald-700 bg-emerald-50 border-emerald-200" :
                           task.status === "in_progress" ? "text-blue-700 bg-blue-50 border-blue-200" :
-                          "text-slate-700 bg-slate-50 border-slate-200"
+                          "text-muted-foreground bg-muted border-border"
                         )}
                       >
+
                         <option value="todo">Todo</option>
                         <option value="in_progress">In Progress</option>
                         <option value="completed">Completed</option>

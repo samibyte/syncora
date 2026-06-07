@@ -56,22 +56,23 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Link href="/projects" className="flex flex-col items-center justify-center p-4 bg-primary/5 hover:bg-primary/10 border border-primary/10 rounded-2xl transition group">
+        <Link href="/projects" className="flex flex-col items-center justify-center p-4 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-2xl transition group">
           <Briefcase className="h-5 w-5 text-primary mb-2 group-hover:scale-110 transition-transform" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-primary">New Project</span>
         </Link>
-        <Link href="/tasks" className="flex flex-col items-center justify-center p-4 bg-secondary/50 hover:bg-secondary border rounded-2xl transition group">
-          <CheckSquare className="h-5 w-5 text-indigo-600 mb-2 group-hover:scale-110 transition-transform" />
-          <span className="text-[10px] font-bold uppercase tracking-widest">Create Task</span>
+        <Link href="/tasks" className="flex flex-col items-center justify-center p-4 bg-secondary hover:bg-secondary/80 border border-border rounded-2xl transition group">
+          <CheckSquare className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mb-2 group-hover:scale-110 transition-transform" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-foreground">Create Task</span>
         </Link>
-        <Link href="/team" className="flex flex-col items-center justify-center p-4 bg-emerald-50/50 hover:bg-emerald-50 border border-emerald-100 rounded-2xl transition group">
-          <Activity className="h-5 w-5 text-emerald-600 mb-2 group-hover:scale-110 transition-transform" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">Team Status</span>
+        <Link href="/team" className="flex flex-col items-center justify-center p-4 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-2xl transition group">
+          <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mb-2 group-hover:scale-110 transition-transform" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Team Status</span>
         </Link>
-        <Link href="/tasks" className="flex flex-col items-center justify-center p-4 bg-amber-50/50 hover:bg-amber-50 border border-amber-100 rounded-2xl transition group">
-          <Clock className="h-5 w-5 text-amber-600 mb-2 group-hover:scale-110 transition-transform" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600">Urgent Tasks</span>
+        <Link href="/tasks" className="flex flex-col items-center justify-center p-4 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-2xl transition group">
+          <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 mb-2 group-hover:scale-110 transition-transform" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400">Urgent Tasks</span>
         </Link>
+
       </div>
 
       {/* KPI Stats */}

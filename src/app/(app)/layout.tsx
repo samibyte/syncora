@@ -9,7 +9,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthProvider>
-      <div className="flex h-screen overflow-hidden bg-slate-50">
+      <div className="flex h-screen overflow-hidden bg-background">
+
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex flex-col flex-1 overflow-hidden">
           <TopNav onMenuClick={() => setSidebarOpen(true)} />

@@ -76,7 +76,7 @@ export default function ProjectsPage() {
       case "on_hold":
         return "bg-amber-100 text-amber-700 border-amber-200";
       default:
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-slate-100 text-slate-700 border-border";
     }
   };
 
@@ -112,7 +112,7 @@ export default function ProjectsPage() {
                 setShowForm(false);
                 setEditTarget(null);
               }}
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="text-sm text-muted-foreground hover:text-slate-900"
             >
               Cancel
             </button>
@@ -134,14 +134,14 @@ export default function ProjectsPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search projects..."
-            className="pl-9 h-10 rounded-xl bg-card border-slate-200"
+            className="pl-9 h-10 rounded-xl bg-card border-border"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-slate-900"
             >
               <X className="h-4 w-4" />
             </button>
@@ -153,7 +153,7 @@ export default function ProjectsPage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="h-10 px-3 bg-card border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+            className="h-10 px-3 bg-card border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
           >
             <option value="latest">Latest Created</option>
             <option value="deadline">Nearest Deadline</option>

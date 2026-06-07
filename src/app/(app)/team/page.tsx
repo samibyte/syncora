@@ -36,11 +36,11 @@ export default function TeamPage() {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case "admin":
-        return "bg-rose-100 text-rose-700 border-rose-200";
+        return "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20";
       case "project_manager":
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20";
       default:
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
@@ -56,7 +56,7 @@ export default function TeamPage() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search team members..."
-          className="pl-9 h-10 bg-card rounded-xl border-slate-200"
+          className="pl-9 h-10 bg-card rounded-xl border-border"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -90,7 +90,7 @@ export default function TeamPage() {
             return (
               <div
                 key={member.id}
-                className="bg-card rounded-2xl border p-6 flex flex-col items-center text-center space-y-4 hover:shadow-lg hover:border-primary/20 transition-all group"
+                className="bg-card rounded-2xl border border-border p-6 flex flex-col items-center text-center space-y-4 hover:shadow-lg hover:border-primary/20 transition-all group"
               >
                 <div className="relative">
                   <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-2xl font-black text-primary border-4 border-background shadow-inner">
@@ -104,7 +104,7 @@ export default function TeamPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="font-bold text-lg">{member.name}</h3>
+                  <h3 className="font-bold text-lg text-foreground">{member.name}</h3>
                   <div
                     className={cn(
                       "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
@@ -115,7 +115,7 @@ export default function TeamPage() {
                   </div>
                 </div>
 
-                <div className="w-full pt-4 border-t space-y-4">
+                <div className="w-full pt-4 border-t border-border space-y-4">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground justify-center">
                     <Mail className="h-3.5 w-3.5" />
                     <span>{member.email}</span>
@@ -125,18 +125,18 @@ export default function TeamPage() {
                   <div className="grid grid-cols-3 gap-2">
                     <div className="bg-muted/50 rounded-xl p-2 flex flex-col items-center">
                       <ListTodo className="h-3 w-3 text-primary mb-1" />
-                      <span className="text-xs font-bold">{stats.total}</span>
+                      <span className="text-xs font-bold text-foreground">{stats.total}</span>
                       <span className="text-[8px] font-bold text-muted-foreground uppercase">Tasks</span>
                     </div>
-                    <div className="bg-emerald-50 rounded-xl p-2 flex flex-col items-center">
-                      <CheckCircle2 className="h-3 w-3 text-emerald-600 mb-1" />
-                      <span className="text-xs font-bold text-emerald-600">{stats.completed}</span>
-                      <span className="text-[8px] font-bold text-emerald-600/70 uppercase">Done</span>
+                    <div className="bg-emerald-500/10 rounded-xl p-2 flex flex-col items-center">
+                      <CheckCircle2 className="h-3 w-3 text-emerald-600 dark:text-emerald-400 mb-1" />
+                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{stats.completed}</span>
+                      <span className="text-[8px] font-bold text-emerald-600/70 dark:text-emerald-400/50 uppercase">Done</span>
                     </div>
-                    <div className="bg-amber-50 rounded-xl p-2 flex flex-col items-center">
-                      <Clock className="h-3 w-3 text-amber-600 mb-1" />
-                      <span className="text-xs font-bold text-amber-600">{stats.pending}</span>
-                      <span className="text-[8px] font-bold text-amber-600/70 uppercase">Wait</span>
+                    <div className="bg-amber-500/10 rounded-xl p-2 flex flex-col items-center">
+                      <Clock className="h-3 w-3 text-amber-600 dark:text-amber-400 mb-1" />
+                      <span className="text-xs font-bold text-amber-600 dark:text-amber-400">{stats.pending}</span>
+                      <span className="text-[8px] font-bold text-amber-600/70 dark:text-amber-400/50 uppercase">Wait</span>
                     </div>
                   </div>
                 </div>
@@ -147,5 +147,6 @@ export default function TeamPage() {
         )}
       </div>
     </div>
+
   );
 }

@@ -15,49 +15,50 @@ const actionConfig: Record<
   project_created: {
     label: "Project Created",
     dotColor: "bg-blue-500",
-    badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
+    badgeClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
   },
   project_updated: {
     label: "Project Updated",
     dotColor: "bg-amber-500",
-    badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
+    badgeClass: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
   },
   project_deleted: {
     label: "Project Deleted",
     dotColor: "bg-red-500",
-    badgeClass: "bg-red-50 text-red-600 border-red-200",
+    badgeClass: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
   },
   task_created: {
     label: "Task Created",
     dotColor: "bg-emerald-500",
-    badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    badgeClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
   },
   task_updated: {
     label: "Task Updated",
     dotColor: "bg-sky-500",
-    badgeClass: "bg-sky-50 text-sky-700 border-sky-200",
+    badgeClass: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20",
   },
   task_deleted: {
     label: "Task Deleted",
     dotColor: "bg-rose-500",
-    badgeClass: "bg-rose-50 text-rose-600 border-rose-200",
+    badgeClass: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
   },
   task_status_updated: {
     label: "Status Updated",
     dotColor: "bg-indigo-500",
-    badgeClass: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    badgeClass: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
   },
   member_added_to_project: {
     label: "Member Added",
     dotColor: "bg-teal-500",
-    badgeClass: "bg-teal-50 text-teal-700 border-teal-200",
+    badgeClass: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-200/20",
   },
   member_assigned_to_task: {
     label: "Assignment",
     dotColor: "bg-violet-500",
-    badgeClass: "bg-violet-50 text-violet-700 border-violet-200",
+    badgeClass: "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20",
   },
 };
+
 
 
 export default function ActivityPage() {
@@ -72,7 +73,7 @@ export default function ActivityPage() {
         description="Recent system actions and events"
       />
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         {logs.length === 0 ? (
           <EmptyState
             icon={Activity}
@@ -80,17 +81,17 @@ export default function ActivityPage() {
             description="Actions will appear here as you use the system."
           />
         ) : (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y">
             {logs.map((log) => {
               const cfg = actionConfig[log.action] || {
                 label: log.action,
-                dotColor: "bg-slate-400",
-                badgeClass: "bg-slate-50 text-slate-600 border-slate-200",
+                dotColor: "bg-muted-foreground/30",
+                badgeClass: "bg-muted text-muted-foreground border-border",
               };
               return (
                 <div
                   key={log.id}
-                  className="flex items-start gap-4 px-5 py-3.5 hover:bg-slate-50/60 transition-colors"
+                  className="flex items-start gap-4 px-5 py-3.5 hover:bg-muted/30 transition-colors"
                 >
                   <div className="mt-1 flex-shrink-0">
                     <span
@@ -104,15 +105,16 @@ export default function ActivityPage() {
                       >
                         {cfg.label}
                       </span>
-                      <p className="text-sm text-slate-700">
+                      <p className="text-sm text-foreground">
                         {log.description}
                       </p>
                     </div>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-muted-foreground mt-0.5">
                       {formatDateTime(log.createdAt)}
                     </p>
                   </div>
                 </div>
+
               );
             })}
           </div>
