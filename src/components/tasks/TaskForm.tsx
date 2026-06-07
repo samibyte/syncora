@@ -11,7 +11,8 @@ import { useProjects } from "@/hooks/useProjects";
 import { useMembers } from "@/hooks/useMembers";
 import { PRIORITY_LEVELS, TASK_STATUSES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { Paperclip, FileText, X as XIcon, Trash2 } from "lucide-react";
+import { Paperclip, FileText, X as XIcon, ExternalLink } from "lucide-react";
+
 import { useState } from "react";
 import type { Attachment } from "@/types";
 
@@ -287,19 +288,37 @@ export function TaskForm({
         {attachments.length > 0 && (
           <div className="grid gap-2 mt-3">
             {attachments.map((file) => (
-              <div key={file.id} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg border text-xs">
-                <div className="flex items-center gap-2 min-w-0">
-                  <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
-                  <span className="truncate font-medium">{file.name}</span>
-                  <span className="text-[10px] text-muted-foreground">({file.size})</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeAttachment(file.id)}
-                  className="p-1 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded transition-colors"
+              <div key={file.id} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg border text-xs group">
+                <a
+                  href={file.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={file.name}
+                  className="flex items-center gap-2 min-w-0 flex-1 hover:underline"
                 >
-                  <XIcon className="h-3.5 w-3.5" />
-                </button>
+                  <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span className="truncate font-medium text-foreground">{file.name}</span>
+                  <span className="text-[10px] text-muted-foreground shrink-0">({file.size})</span>
+                </a>
+                <div className="flex items-center gap-1 ml-2 shrink-0">
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1 hover:bg-primary/10 text-muted-foreground hover:text-primary rounded transition-colors"
+                    title="View file"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => removeAttachment(file.id)}
+                    className="p-1 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded transition-colors"
+                    title="Remove"
+                  >
+                    <XIcon className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

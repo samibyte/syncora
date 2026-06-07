@@ -6,11 +6,15 @@ import { useMembers } from "@/hooks/useMembers";
 import { PageHeader } from "@/components/shared/PageHeader";
 
 import { TaskForm } from "@/components/tasks/TaskForm";
+import { TaskComments } from "@/components/tasks/TaskComments";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { EmptyState } from "@/components/shared/EmptyState";
 import {
   Paperclip,
+  ExternalLink,
+  MessageSquare,
   CheckSquare,
+
 
   Trash2,
   Plus,
@@ -85,6 +89,7 @@ export default function TasksPage() {
   const [showForm, setShowForm] = useState(false);
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+  const [commentTask, setCommentTask] = useState<Task | null>(null);
 
   const toggleSelectAll = () => {
     if (selectedTaskIds.length === filteredTasks.length) {
@@ -424,6 +429,7 @@ export default function TasksPage() {
                   <th className="px-6 py-4">Due Date</th>
                   <th className="px-6 py-4">Priority</th>
                   <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-center">Comments</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -472,11 +478,24 @@ export default function TasksPage() {
                           {projects.find(p => p.id === task.projectId)?.name || "Unknown Project"}
                         </p>
                         {task.attachments && task.attachments.length > 0 && (
-                          <div className="flex items-center gap-1.5 mt-1 text-[10px] font-bold text-muted-foreground bg-muted/50 w-fit px-1.5 py-0.5 rounded border border-border">
-                            <Paperclip className="h-3 w-3" />
-                            <span>{task.attachments.length} File{task.attachments.length > 1 ? "s" : ""}</span>
+                          <div className="mt-1.5 space-y-1">
+                            {task.attachments.map((att) => (
+                              <a
+                                key={att.id}
+                                href={att.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground hover:text-primary bg-muted/40 hover:bg-primary/10 w-fit px-1.5 py-0.5 rounded border border-border hover:border-primary/30 transition-all"
+                                title={`Open ${att.name}`}
+                              >
+                                <Paperclip className="h-2.5 w-2.5 shrink-0" />
+                                <span className="max-w-[120px] truncate">{att.name}</span>
+                                <ExternalLink className="h-2.5 w-2.5 shrink-0 opacity-60" />
+                              </a>
+                            ))}
                           </div>
                         )}
+
                       </div>
                     </div>
                     </td>
@@ -522,6 +541,15 @@ export default function TasksPage() {
                         <option value="completed">Completed</option>
                       </select>
                     </td>
+                    <td className="px-6 py-4 text-center">
+                      <button
+                        onClick={() => setCommentTask(task)}
+                        className="p-2 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors relative"
+                        title="View comments"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </button>
+                    </td>
                     <td className="px-6 py-4 text-right">
                       {canManage && (
                         <div className="flex items-center justify-end gap-1">
@@ -560,6 +588,24 @@ export default function TasksPage() {
         confirmText="Delete Task"
         loading={deleting}
       />
+
+      {/* Comments Side Panel */}
+      {commentTask && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setCommentTask(null)}
+          />
+          {/* Panel */}
+          <div className="relative w-full max-w-md h-full bg-background border-l border-border shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            <TaskComments
+              task={commentTask}
+              onClose={() => setCommentTask(null)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
