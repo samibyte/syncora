@@ -4,6 +4,9 @@ import { readDb, writeDb } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
 import { taskSchema } from "@/lib/validations/task.schema";
 import { generateId } from "@/lib/utils/id";
+import { createNotification } from "@/lib/notif"
+
+
 
 async function getUser() {
   const cookieStore = await cookies();
@@ -68,7 +71,34 @@ export async function PATCH(
 
   db.tasks[index] = updatedTask;
 
+  // Notification: New Assignment
+  if (parsed.data.assignedMemberId && parsed.data.assignedMemberId !== existingTask.assignedMemberId && parsed.data.assignedMemberId !== user.id) {
+    createNotification({
+      db,
+      userId: parsed.data.assignedMemberId,
+      type: "task_assigned",
+      title: "Task Assigned",
+      message: `${user.name} assigned you the task: ${updatedTask.title}`,
+      taskId: updatedTask.id,
+      projectId: updatedTask.projectId,
+    });
+  }
+
+  // Notification: Status Updated (notify current assignee if someone else changed it)
+  if (parsed.data.status && parsed.data.status !== existingTask.status && updatedTask.assignedMemberId !== user.id) {
+    createNotification({
+      db,
+      userId: updatedTask.assignedMemberId,
+      type: "task_status_updated",
+      title: "Task Status Updated",
+      message: `The status of your task "${updatedTask.title}" was updated to ${updatedTask.status} by ${user.name}`,
+      taskId: updatedTask.id,
+      projectId: updatedTask.projectId,
+    });
+  }
+
   db.activityLogs.unshift({
+
     id: generateId(),
     action: "task_status_updated",
     description: `Task "${updatedTask.title}" updated by ${user.name}`,

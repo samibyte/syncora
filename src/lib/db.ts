@@ -16,7 +16,9 @@ const defaultDb: Database = {
   tasks: [],
   activityLogs: [],
   comments: [],
+  notifications: [],
 };
+
 
 
 declare global {

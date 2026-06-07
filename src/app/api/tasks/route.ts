@@ -4,6 +4,7 @@ import { readDb, writeDb } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
 import { taskSchema } from "@/lib/validations/task.schema";
 import { generateId } from "@/lib/utils/id";
+import { createNotification } from "@/lib/notif";
 
 async function getUser() {
   const cookieStore = await cookies();
@@ -97,7 +98,20 @@ export async function POST(req: Request) {
 
   db.tasks.push(task);
 
+  if (task.assignedMemberId && task.assignedMemberId !== user.id) {
+    createNotification({
+      db,
+      userId: task.assignedMemberId,
+      type: "task_assigned",
+      title: "New Task Assigned",
+      message: `${user.name} assigned you the task: ${task.title}`,
+      taskId: task.id,
+      projectId: task.projectId,
+    });
+  }
+
   db.activityLogs.unshift({
+
     id: generateId(),
     action: "task_created",
     description: `Task "${task.title}" assigned to ${task.assignedMemberName}`,

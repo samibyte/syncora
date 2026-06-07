@@ -165,5 +165,36 @@
       "userId": "user_pm",
       "createdAt": "2026-06-07T09:00:00Z"
     }
+  ],
+  "comments": [
+    {
+      "id": "comm_1",
+      "taskId": "task_1",
+      "authorId": "user_pm",
+      "authorName": "Sarah Project",
+      "content": "Please make sure to use terraform for this configuration.",
+      "createdAt": "2026-06-07T10:30:00Z"
+    },
+    {
+      "id": "comm_2",
+      "taskId": "task_1",
+      "authorId": "user_member",
+      "authorName": "John Member",
+      "content": "On it! Will push the PR by tomorrow EOD.",
+      "createdAt": "2026-06-07T11:15:00Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif_1",
+      "userId": "user_member",
+      "type": "task_assigned",
+      "title": "New Task",
+      "message": "Sarah Project assigned you the task: AWS VPC Configuration",
+      "taskId": "task_1",
+      "projectId": "proj_1",
+      "isRead": false,
+      "createdAt": "2026-06-07T09:00:05Z"
+    }
   ]
 }

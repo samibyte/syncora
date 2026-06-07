@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { readDb, writeDb } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
 import { generateId } from "@/lib/utils/id";
+import { createNotification } from "@/lib/notif";
+
 
 async function getUser() {
   const cookieStore = await cookies();
@@ -64,7 +66,21 @@ export async function POST(
   if (!db.comments) db.comments = [];
   db.comments.push(comment);
 
+  // Notify assignee if someone else comments
+  if (task.assignedMemberId && task.assignedMemberId !== user.id) {
+    createNotification({
+      db,
+      userId: task.assignedMemberId,
+      type: "comment_added",
+      title: "New Comment",
+      message: `${user.name} commented on your task: ${task.title}`,
+      taskId: task.id,
+      projectId: task.projectId,
+    });
+  }
+
   await writeDb(db);
+
 
   return NextResponse.json({ data: comment }, { status: 201 });
 }

@@ -86,6 +86,25 @@ export interface Comment {
   createdAt: string;
 }
 
+// --- Notifications ---
+export type NotificationType =
+  | "task_assigned"
+  | "comment_added"
+  | "task_status_updated"
+  | "task_deadline_soon";
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  taskId?: string;
+  projectId?: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
 // --- DB Shape ---
 export interface Database {
   users: User[];
@@ -93,7 +112,9 @@ export interface Database {
   tasks: Task[];
   activityLogs: ActivityLog[];
   comments: Comment[];
+  notifications: Notification[];
 }
+
 
 
 // --- API Response ---

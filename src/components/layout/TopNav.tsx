@@ -5,8 +5,12 @@ import { useAuthStore } from "@/store/authStore";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Menu, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { NotificationBell } from "./NotificationBell";
+import { ThemeToggle } from "./ThemeToggle";
+
 
 interface TopNavProps {
+
   onMenuClick?: () => void;
 }
 
@@ -76,8 +80,12 @@ export function TopNav({ onMenuClick = () => {} }: TopNavProps) {
         </button>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-4">
+        <NotificationBell />
+        <ThemeToggle />
+        
         <div className="flex flex-col items-end hidden sm:flex">
+
           <span className="text-xs font-bold text-foreground leading-none">
             {user?.name}
           </span>
