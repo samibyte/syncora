@@ -31,6 +31,15 @@ export interface Project {
 export type TaskPriority = "high" | "medium" | "low";
 export type TaskStatus = "todo" | "in_progress" | "completed";
 
+export interface Attachment {
+  id: string;
+  name: string;
+  url: string;
+  size: string;
+  type: string;
+  uploadedAt: string;
+}
+
 export interface Task {
   id: string;
   projectId: string; // Reference to Project
@@ -41,9 +50,11 @@ export interface Task {
   dueDate: string;
   priority: TaskPriority;
   status: TaskStatus;
+  attachments?: Attachment[];
   createdAt: string;
   updatedAt: string;
 }
+
 
 // --- Activity Log ---
 export type ActivityAction =

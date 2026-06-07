@@ -14,7 +14,7 @@ async function getUser() {
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getUser();
   if (!user)
@@ -67,7 +67,7 @@ export async function PATCH(
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const user = await getUser();
   if (!user)

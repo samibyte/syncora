@@ -10,6 +10,15 @@ export const taskSchema = z.object({
   }),
   priority: z.enum(["high", "medium", "low"]),
   status: z.enum(["todo", "in_progress", "completed"]),
+  attachments: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    size: z.string(),
+    type: z.string(),
+    uploadedAt: z.string()
+  })).optional(),
 });
+
 
 export type TaskInput = z.infer<typeof taskSchema>;

@@ -9,7 +9,9 @@ import { TaskForm } from "@/components/tasks/TaskForm";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { EmptyState } from "@/components/shared/EmptyState";
 import {
+  Paperclip,
   CheckSquare,
+
   Trash2,
   Plus,
   Filter,
@@ -469,9 +471,16 @@ export default function TasksPage() {
                         <p className="text-[10px] font-bold text-primary uppercase">
                           {projects.find(p => p.id === task.projectId)?.name || "Unknown Project"}
                         </p>
+                        {task.attachments && task.attachments.length > 0 && (
+                          <div className="flex items-center gap-1.5 mt-1 text-[10px] font-bold text-muted-foreground bg-muted/50 w-fit px-1.5 py-0.5 rounded border border-border">
+                            <Paperclip className="h-3 w-3" />
+                            <span>{task.attachments.length} File{task.attachments.length > 1 ? "s" : ""}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                     </td>
+
 
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
