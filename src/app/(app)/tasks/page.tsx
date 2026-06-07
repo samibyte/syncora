@@ -45,16 +45,104 @@ export default function TasksPage() {
     assignedMemberId,
   });
 
+  const [sortBy, setSortBy] = useState("latest");
 
-  const filteredTasks = tasks.filter((t) =>
+  const getPriorityWeight = (p: string) => {
+    switch (p) {
+      case "high": return 3;
+      case "medium": return 2;
+      case "low": return 1;
+      default: return 0;
+    }
+  };
+
+  const sortedTasks = [...tasks].sort((a, b) => {
+    switch (sortBy) {
+      case "latest":
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case "deadline":
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+      case "priority":
+        return getPriorityWeight(b.priority) - getPriorityWeight(a.priority);
+      case "updated":
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      default:
+        return 0;
+    }
+  });
+
+  const filteredTasks = sortedTasks.filter((t) =>
     t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     t.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
 
   const [deleteTarget, setDeleteTarget] = useState<Task | null>(null);
   const [editTarget, setEditTarget] = useState<Task | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+
+  const toggleSelectAll = () => {
+    if (selectedTaskIds.length === filteredTasks.length) {
+      setSelectedTaskIds([]);
+    } else {
+      setSelectedTaskIds(filteredTasks.map((t) => t.id));
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedTaskIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkStatusUpdate = async (newStatus: string) => {
+    if (selectedTaskIds.length === 0) return;
+    setIsBulkUpdating(true);
+    try {
+      // For a real app, I'd suggest a dedicated bulk API endpoint,
+      // but for this demo I'll iterate or just simulate it.
+      await Promise.all(
+        selectedTaskIds.map((id) =>
+          fetch(`/api/tasks/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          })
+        )
+      );
+      toast.success(`Updated ${selectedTaskIds.length} tasks`);
+      setSelectedTaskIds([]);
+      mutate();
+    } catch {
+      toast.error("Bulk update failed");
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedTaskIds.length === 0) return;
+    if (!confirm(`Are you sure you want to delete ${selectedTaskIds.length} tasks?`)) return;
+    setIsBulkUpdating(true);
+    try {
+      await Promise.all(
+        selectedTaskIds.map((id) =>
+          fetch(`/api/tasks/${id}`, { method: "DELETE" })
+        )
+      );
+      toast.success(`Deleted ${selectedTaskIds.length} tasks`);
+      setSelectedTaskIds([]);
+      mutate();
+    } catch {
+      toast.error("Bulk delete failed");
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
 
   const canManage = user?.role === "admin" || user?.role === "project_manager";
 
@@ -205,19 +293,32 @@ export default function TasksPage() {
           ))}
         </select>
 
-        {(projectId || status || priority || assignedMemberId) && (
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="bg-muted px-3 py-1.5 rounded-lg text-sm outline-none border border-transparent focus:border-primary/30 transition-all font-medium"
+        >
+          <option value="latest">Latest</option>
+          <option value="deadline">Deadline</option>
+          <option value="priority">Priority</option>
+          <option value="updated">Updated</option>
+        </select>
+
+        {(projectId || status || priority || assignedMemberId || sortBy !== "latest") && (
           <button
             onClick={() => {
               setProjectId("");
               setStatus("");
               setPriority("");
               setAssignedMemberId("");
+              setSortBy("latest");
             }}
             className="text-xs font-semibold text-primary hover:underline ml-auto"
           >
             Clear All
           </button>
         )}
+
 
       </div>
 
@@ -250,6 +351,46 @@ export default function TasksPage() {
         </div>
       )}
 
+      {/* Bulk Action Bar */}
+      {selectedTaskIds.length > 0 && (
+        <div className="sticky top-4 z-50 bg-primary text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center justify-between mb-2 animate-in slide-in-from-top-4 duration-300">
+          <div className="flex items-center gap-4">
+            <div className="bg-white/20 p-2 rounded-lg">
+              <CheckSquare className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-bold text-sm">{selectedTaskIds.length} Tasks Selected</p>
+              <p className="text-[10px] opacity-80 uppercase font-black tracking-widest">Bulk Actions Active</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <select
+              onChange={(e) => handleBulkStatusUpdate(e.target.value)}
+              disabled={isBulkUpdating}
+              className="bg-white/10 border border-white/20 rounded-lg px-3 py-1.5 text-xs font-bold outline-none focus:ring-2 focus:ring-white/50"
+            >
+              <option value="" className="text-slate-900">Change Status...</option>
+              <option value="todo" className="text-slate-900">Set Todo</option>
+              <option value="in_progress" className="text-slate-900">Set In Progress</option>
+              <option value="completed" className="text-slate-900">Set Completed</option>
+            </select>
+            <button
+              onClick={handleBulkDelete}
+              disabled={isBulkUpdating}
+              className="bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-colors border border-red-400/30"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setSelectedTaskIds([])}
+              className="text-white/80 hover:text-white transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Task List */}
       <div className="bg-card rounded-2xl border overflow-hidden shadow-sm">
         {isLoading ? (
@@ -267,7 +408,16 @@ export default function TasksPage() {
             <table className="w-full text-left border-collapse">
               <thead className="bg-muted/50 text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 w-10">
+                    <input 
+                      type="checkbox" 
+                      className="rounded border-slate-300 text-primary focus:ring-primary h-4 w-4"
+                      checked={selectedTaskIds.length === filteredTasks.length && filteredTasks.length > 0}
+                      onChange={toggleSelectAll}
+                    />
+                  </th>
                   <th className="px-6 py-4">Task Details</th>
+
                   <th className="px-6 py-4">Assigned To</th>
                   <th className="px-6 py-4">Due Date</th>
                   <th className="px-6 py-4">Priority</th>
@@ -279,16 +429,40 @@ export default function TasksPage() {
                 {filteredTasks.map((task) => (
                   <tr
                     key={task.id}
-                    className="group hover:bg-muted/30 transition-colors"
+                    className={cn(
+                      "group hover:bg-muted/30 transition-colors",
+                      selectedTaskIds.includes(task.id) && "bg-primary/5"
+                    )}
                   >
+                    <td className="px-6 py-4">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-slate-300 text-primary focus:ring-primary h-4 w-4"
+                        checked={selectedTaskIds.includes(task.id)}
+                        onChange={() => toggleSelectOne(task.id)}
+                      />
+                    </td>
                     <td className="px-6 py-4 max-w-sm">
-                      <div className="space-y-1">
-                        <p className={cn(
-                          "font-bold text-sm tracking-tight",
-                          task.status === "completed" && "line-through text-muted-foreground"
-                        )}>
-                          {task.title}
-                        </p>
+                      <div className="flex items-start gap-4">
+                        <button
+                          onClick={() => handleStatusUpdate(task, task.status === "completed" ? "todo" : "completed")}
+                          className={cn(
+                            "mt-1 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors shrink-0",
+                            task.status === "completed" 
+                              ? "bg-emerald-500 border-emerald-500 text-white" 
+                              : "border-slate-300 hover:border-primary"
+                          )}
+                        >
+                          {task.status === "completed" && <CheckSquare className="h-3.5 w-3.5 shadow-sm" />}
+                        </button>
+                        <div className="space-y-1">
+                          <p className={cn(
+                            "font-bold text-sm tracking-tight",
+                            task.status === "completed" && "line-through text-muted-foreground"
+                          )}>
+                            {task.title}
+                          </p>
+
                         <p className="text-xs text-muted-foreground line-clamp-1">
                           {task.description}
                         </p>
@@ -296,7 +470,9 @@ export default function TasksPage() {
                           {projects.find(p => p.id === task.projectId)?.name || "Unknown Project"}
                         </p>
                       </div>
+                    </div>
                     </td>
+
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold border border-border">

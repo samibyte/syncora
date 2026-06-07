@@ -22,11 +22,26 @@ export default function ProjectsPage() {
   const [editTarget, setEditTarget] = useState<Project | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [sortBy, setSortBy] = useState("latest");
 
-  const filteredProjects = projects.filter((p) =>
+  const sortedProjects = [...projects].sort((a, b) => {
+    switch (sortBy) {
+      case "latest":
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case "deadline":
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      case "updated":
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      default:
+        return 0;
+    }
+  });
+
+  const filteredProjects = sortedProjects.filter((p) =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
 
   const canManage = user?.role === "admin" || user?.role === "project_manager";
 
@@ -114,23 +129,39 @@ export default function ProjectsPage() {
       )}
 
       {/* Search & Filters */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search projects by name or description..."
-          className="pl-9 h-10 rounded-xl bg-card border-slate-200"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+      <div className="flex flex-wrap gap-4">
+        <div className="relative flex-1 min-w-[300px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search projects..."
+            className="pl-9 h-10 rounded-xl bg-card border-slate-200"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Sort by:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="h-10 px-3 bg-card border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
           >
-            <X className="h-4 w-4" />
-          </button>
-        )}
+            <option value="latest">Latest Created</option>
+            <option value="deadline">Nearest Deadline</option>
+            <option value="updated">Recently Updated</option>
+          </select>
+        </div>
       </div>
+
 
       {/* Projects list */}
       <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
@@ -202,8 +233,25 @@ export default function ProjectsPage() {
                   {project.description}
                 </p>
 
+                {/* Progress Bar */}
+                <div className="space-y-1.5 mb-5">
+                  <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider">
+                    <span className="text-muted-foreground">Progress</span>
+                    <span className="text-primary">{projectTasks.length > 0 ? Math.round((projectTasks.filter(t => t.status === "completed").length / projectTasks.length) * 100) : 0}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary transition-all duration-500 ease-out"
+                      style={{ 
+                        width: `${projectTasks.length > 0 ? (projectTasks.filter(t => t.status === "completed").length / projectTasks.length) * 100 : 0}%` 
+                      }}
+                    />
+                  </div>
+                </div>
+
                 <div className="pt-4 border-t flex items-center justify-between">
                   <div className="flex -space-x-2">
+
                     <div className="w-7 h-7 rounded-full bg-primary/10 border-2 border-background flex items-center justify-center text-[10px] font-bold text-primary">
                       {project.name.charAt(0)}
                     </div>
